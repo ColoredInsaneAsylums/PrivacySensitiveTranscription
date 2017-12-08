@@ -103,7 +103,7 @@ def main():
 
     # print helpful information to the console
     print('{} subject sets created with the following IDs: {}'.format(len(subjectSets), subjectSets))
-            
+
 if __name__ == '__main__':
     main()
 

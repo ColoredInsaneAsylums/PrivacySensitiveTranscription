@@ -61,16 +61,16 @@ def main():
                             transcription_text_2 = str(task['value'])
                 except KeyError:
                     continue
-                        
-            # retrieve and update the record from MongoDB  
-            updateQuery = {                       
-                '$set':{           
+
+            # retrieve and update the record from MongoDB
+            updateQuery = {
+                '$set':{
                     'responses': [{
                         'labellerId': row['user_id'],
                         'type'      : transcription_text_1,
                         'label'     : transcription_text_2
-                    }],                                
-                    'transcription': {                    
+                    }],
+                    'transcription': {
                         'status'   : 'done'
                     }
                 }
