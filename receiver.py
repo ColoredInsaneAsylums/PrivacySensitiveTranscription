@@ -1,3 +1,4 @@
+# !/usr/bin/python
 # This program takes the list of classifications crowdsourced in Zooniverse and updates the same in MongoDB corresponding to the subjects.
 
 from panoptes_client import SubjectSet, Subject, Project, Panoptes
