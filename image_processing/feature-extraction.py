@@ -34,9 +34,17 @@ def main():
 
     # evaluate image files
     print('[INFO] Reshaping images and computing HOG features...')
+    div = lambda n: (n // 2, n // 2 + 1) if n % 2 else (n // 2, n // 2)
     for filename, im in ims.items():
-        # resize image and compute features
-        im = cv2.resize(im, (width, height))
+        # compute padding
+        im_h, im_w = im.shape[:2]
+        t, b = div(height - im_h)
+        l, r = div(width - im_w)
+
+        # pad image with whitespace and compute features
+        im = cv2.copyMakeBorder(im, top=t, bottom=b, left=l, right=r,
+                                borderType=cv2.BORDER_CONSTANT,
+                                value=[255, 255, 255])
         h = hog.compute(im)
 
         features[filename] = h

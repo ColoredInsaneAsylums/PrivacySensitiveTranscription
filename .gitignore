@@ -1,7 +1,7 @@
 *.jpg
 *.zip
-features.pickle
-hog_features.csv
+*.pickle
+*.csv
 *_config.py
 *.pyc
 __pycache__/
