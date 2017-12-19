@@ -14,16 +14,20 @@ def main():
     features = {}
     h_features = []
 
+    # image dimensions
+    height = 64
+    width = 128
+
     # load images in black/white
     ims = {filename: cv2.imread(path + filename, 0) for filename in os.listdir(path)}
 
     # find largest image dimensions and align to block size and stride
     print('[INFO] Calculating image window size...')
-    height = max([im.shape[0] for im in ims.values()])
-    width = max([im.shape[1] for im in ims.values()])
+    max_height = max([im.shape[0] for im in ims.values()])
+    max_width = max([im.shape[1] for im in ims.values()])
 
-    height += 8 - (height % 8)
-    width += 8 - (width % 8)
+    max_height += 8 - (height % 8)
+    max_width += 8 - (width % 8)
 
     # HOG feature descriptor
     hog = cv2.HOGDescriptor(_winSize = (width,height),
@@ -38,13 +42,16 @@ def main():
     for filename, im in ims.items():
         # compute padding
         im_h, im_w = im.shape[:2]
-        t, b = div(height - im_h)
-        l, r = div(width - im_w)
+        t, b = div(max_height - im_h)
+        l, r = div(max_width - im_w)
 
-        # pad image with whitespace and compute features
+        # pad image with whitespace
         im = cv2.copyMakeBorder(im, top=t, bottom=b, left=l, right=r,
                                 borderType=cv2.BORDER_CONSTANT,
                                 value=[255, 255, 255])
+
+        # resize image and compute features
+        im = cv2.resize(im, (width,height))
         h = hog.compute(im)
 
         features[filename] = h
