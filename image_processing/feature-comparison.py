@@ -8,7 +8,7 @@ def main():
     print('[INFO] Working...')
 
     # similarity threshold
-    threshold = 0.5
+    threshold = 0.6
 
     # load feature vectors
     with open('features.pickle', 'rb') as handle:

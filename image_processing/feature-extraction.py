@@ -15,19 +15,8 @@ def main():
     h_features = []
 
     # image dimensions
-    height = 64
     width = 128
-
-    # load images in black/white
-    ims = {filename: cv2.imread(path + filename, 0) for filename in os.listdir(path)}
-
-    # find largest image dimensions and align to block size and stride
-    print('[INFO] Calculating image window size...')
-    max_height = max([im.shape[0] for im in ims.values()])
-    max_width = max([im.shape[1] for im in ims.values()])
-
-    max_height += 8 - (height % 8)
-    max_width += 8 - (width % 8)
+    height = 64
 
     # HOG feature descriptor
     hog = cv2.HOGDescriptor(_winSize = (width,height),
@@ -37,18 +26,9 @@ def main():
                             _nbins = 9)
 
     # evaluate image files
-    print('[INFO] Reshaping images and computing HOG features...')
-    div = lambda n: (n // 2, n // 2 + 1) if n % 2 else (n // 2, n // 2)
-    for filename, im in ims.items():
-        # compute padding
-        im_h, im_w = im.shape[:2]
-        t, b = div(max_height - im_h)
-        l, r = div(max_width - im_w)
-
-        # pad image with whitespace
-        im = cv2.copyMakeBorder(im, top=t, bottom=b, left=l, right=r,
-                                borderType=cv2.BORDER_CONSTANT,
-                                value=[255, 255, 255])
+    print('[INFO] Reshaping images and computing HOG features')
+    for filename in os.listdir(path):
+        im = cv2.imread(path + filename, 0)
 
         # resize image and compute features
         im = cv2.resize(im, (width,height))
@@ -58,11 +38,11 @@ def main():
         h_features.append(h)
 
     # save data
-    print('[INFO] Saving HOG features and corresponding image name to \'features.pickle\'.')
+    print('[INFO] Saving HOG features and corresponding image name to \'features.pickle\'')
     with open('features.pickle', 'wb') as handle:
         pickle.dump(features, handle)
 
-    print('[INFO] Saving HOG feature vectors to \'hog_features.csv\'.')
+    print('[INFO] Saving HOG feature vectors to \'hog_features.csv\'')
     numpy.savetxt('hog_features.csv',
                   numpy.array(h_features),
                   delimiter=',')
