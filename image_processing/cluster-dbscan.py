@@ -17,12 +17,11 @@ def main():
     dataset = list(index.values())
     dataset = np.asarray(dataset)
 
-    n_samples, n_x, n_y = dataset.shape
-    dataset = dataset.reshape((n_samples, n_x * n_y))
+    #n_samples, n_x, n_y = dataset.shape
+    #dataset = dataset.reshape((n_samples, n_x * n_y))
 
     # train model
-    #dbscan = DBSCAN(eps=0.3, min_samples=10, metric='cosine', algorithm='brute', n_jobs=-1)
-    dbscan = DBSCAN(n_jobs=-1)
+    dbscan = DBSCAN(eps=0.3, min_samples=10, metric='cosine', algorithm='brute', n_jobs=-1)
     model = dbscan.fit(dataset)
 
     # cluster analysis

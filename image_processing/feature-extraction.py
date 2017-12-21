@@ -12,7 +12,6 @@ def main():
 
     # track HOG feature vectors and corresponding images
     features = {}
-    h_features = []
 
     # image dimensions
     width = 128
@@ -34,18 +33,15 @@ def main():
         im = cv2.resize(im, (width,height))
         h = hog.compute(im)
 
+        # flatten to 1D array
+        h = h.flatten()
+
         features[filename] = h
-        h_features.append(h)
 
     # save data
     print('[INFO] Saving HOG features and corresponding image name to \'features.pickle\'')
     with open('features.pickle', 'wb') as handle:
         pickle.dump(features, handle)
-
-    print('[INFO] Saving HOG feature vectors to \'hog_features.csv\'')
-    numpy.savetxt('hog_features.csv',
-                  numpy.array(h_features),
-                  delimiter=',')
 
 if __name__ == '__main__':
     main()
