@@ -16,13 +16,20 @@ def main():
 
     while True:
         # get user input
-        label = int(input('[INFO] Input a number from ' + str(min(unique_labels)) + \
-                          ' to ' + str(max(unique_labels)) + ' to view a cluster: '))
+        label = input('[INFO] Input a number from ' + str(min(unique_labels)) + \
+                      ' to ' + str(max(unique_labels)) + ' to view a cluster: ')
 
-        if label not in unique_labels:
-            print('[ERR] Input not in specified range')
+        try:
+            label = int(label)
+        except:
+            print('[ERROR] Expected an int')
             continue
 
+        if label not in unique_labels:
+            print('[ERROR] Input not in specified range')
+            continue
+
+        # view items in clusters
         for im, l in labels.items():
             if l == label:
                 img = cv2.imread('./images/' + im, 0)
@@ -31,6 +38,7 @@ def main():
                 k = cv2.waitKey(0) & 0xFF
                 cv2.destroyAllWindows()
 
+                # press ESC to exit
                 if k == 27:
                     break
 
