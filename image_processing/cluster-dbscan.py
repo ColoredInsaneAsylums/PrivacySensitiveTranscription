@@ -9,7 +9,7 @@ def main():
     print('[INFO] Working...')
 
     # load feature vectors
-    with open('features.pickle', 'rb') as handle:
+    with open('./features2/HOG_features.pickle', 'rb') as handle:
         unpickler = pickle.Unpickler(handle)
         index = unpickler.load()
 
@@ -21,7 +21,7 @@ def main():
     #dataset = dataset.reshape((n_samples, n_x * n_y))
 
     # train model
-    dbscan = DBSCAN(eps=0.3, min_samples=10, metric='cosine', algorithm='brute', n_jobs=-1)
+    dbscan = DBSCAN(eps=0.35, min_samples=5, metric='cosine', algorithm='brute', n_jobs=-1)
     model = dbscan.fit(dataset)
 
     # cluster analysis

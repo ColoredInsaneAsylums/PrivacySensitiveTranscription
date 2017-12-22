@@ -3,7 +3,7 @@ import cv2
 import os
 import _pickle as pickle
 
-from extractors import SIFT, SURF, HOG, ORB
+from descriptors import SIFT, SURF, HOG, ORB
 
 # run image filtering and HOG feature extraction
 def main(desc_name):
