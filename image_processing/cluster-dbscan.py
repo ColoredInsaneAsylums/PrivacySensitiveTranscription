@@ -9,7 +9,7 @@ def main():
     print('[INFO] Working...')
 
     # load feature vectors
-    with open('./features2/HOG_features.pickle', 'rb') as handle:
+    with open('./features/HOG_features.pickle', 'rb') as handle:
         unpickler = pickle.Unpickler(handle)
         index = unpickler.load()
 
@@ -17,11 +17,8 @@ def main():
     dataset = list(index.values())
     dataset = np.asarray(dataset)
 
-    #n_samples, n_x, n_y = dataset.shape
-    #dataset = dataset.reshape((n_samples, n_x * n_y))
-
     # train model
-    dbscan = DBSCAN(eps=0.35, min_samples=5, metric='cosine', algorithm='brute', n_jobs=-1)
+    dbscan = DBSCAN(eps=0.3, min_samples=2, metric='cosine', algorithm='brute', n_jobs=-1)
     model = dbscan.fit(dataset)
 
     # cluster analysis
@@ -43,11 +40,17 @@ def main():
     #print('[INFO] Silhouette Coefficient: %0.3f'
     #      % metrics.silhouette_score(X, labels))
 
-    # save model
+    labels = dict(zip(index.keys(), labels))
+
+    # save model and labels
     with open('dbscan_model.pickle', 'wb') as handle:
         pickle.dump(model, handle)
 
+    with open('labels.pickle', 'wb') as handle:
+        pickle.dump(labels, handle)
+
     print('[INFO] DBSCAN model trained and saved to dbscan_model.pickle')
+    print('[INFO] Cluster labels saved to labels.pickle')
 
 if __name__ == '__main__':
     main()
