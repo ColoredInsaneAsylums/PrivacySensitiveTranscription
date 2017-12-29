@@ -1,9 +1,11 @@
 import argparse
 import cv2
+import numpy as np
 import os
 import _pickle as pickle
 
 from descriptors import SIFT, SURF, HOG, ORB
+from skimage.morphology import skeletonize
 
 # run image filtering and HOG feature extraction
 def main(desc_name):
@@ -30,14 +32,23 @@ def main(desc_name):
         descriptor = ORB()
 
     # evaluate image files
-    print('[INFO] Reshaping images and computing ' + desc_name + ' features')
+    print('[INFO] Processing images and computing ' + desc_name + ' features')
     for filename in os.listdir(path):
         im = cv2.imread(path + filename, cv2.COLOR_BGR2GRAY)
 
-        # resize image and compute features
+        # resize image
         im = cv2.resize(im, (width,height))
-        v = descriptor.compute(im)
 
+        # binarize using Otsu's method
+        im = cv2.threshold(im, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+        im[im == 255] = 1
+
+        # thin using Zhang and Suen's method
+        im = skeletonize(im)
+        im = im.astype(np.uint8)
+
+        # compute features
+        v = descriptor.compute(im)
         features[filename] = v
 
     # save data
