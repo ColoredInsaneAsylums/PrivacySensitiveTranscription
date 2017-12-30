@@ -5,15 +5,15 @@ import _pickle as pickle
 from scipy import spatial
 
 # find the most similar images given a query image
-def main(desc_name):
+def main(feat_path):
     print('[INFO] Working...')
 
     # similarity threshold
     threshold = 0.6
 
     # load feature vectors
-    print('[INFO] Loading saved ' + desc_name + ' features')
-    with open('features/' + desc_name + '_features.pickle', 'rb') as handle:
+    print('[INFO] Loading features from \'' + feat_path + '\'')
+    with open(feat_path, 'rb') as handle:
         unpickler = pickle.Unpickler(handle)
         index = unpickler.load()
 
@@ -21,7 +21,7 @@ def main(desc_name):
         results = {}
 
         # get user input
-        image_q = input('[INFO] Input an image to compare: ')
+        image_q = input('[INPUT] Input an image to compare: ')
 
         if image_q not in index:
             print('[INFO] Query image not found, please try another.')
@@ -50,15 +50,15 @@ def main(desc_name):
             # cv2.imshow(image_n, im)
 
 if __name__ == '__main__':
-    # require name of descriptor to use
-    parser = argparse.ArgumentParser(description='Extract image feature vectors using feature descriptors (i.e., SIFT, SURF, HOG, ORB).')
-    parser.add_argument('-d', '--descriptor', required=True,
-                        choices=['SIFT', 'SURF', 'HOG', 'ORB'],
-                        nargs=1, action='store', type=str, dest='desc_name',
-                        help='The name of the descriptor to use (i.e., SIFT, SURF, HOG, ORB)')
+    # require filepath of features
+    parser = argparse.ArgumentParser(description='Compare image feature vectors via cosine similarity')
+    parser.add_argument('-p', '--path', required=True,
+                        nargs='?', action='store', const='./features/hog_features.pickle',
+                        type=str, dest='feat_path',
+                        help='The filepath of the feature vectors to compare')
 
     args = vars(parser.parse_args())
-    desc_name = args['desc_name'][0]
+    feat_path = args['feat_path']
 
-    main(desc_name)
+    main(feat_path)
 

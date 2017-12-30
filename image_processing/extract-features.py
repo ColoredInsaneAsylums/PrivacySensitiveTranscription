@@ -4,15 +4,12 @@ import numpy as np
 import os
 import _pickle as pickle
 
-from descriptors import SIFT, SURF, HOG, ORB
+from descriptors import HOG
 from skimage.morphology import skeletonize
 
 # run image filtering and HOG feature extraction
-def main(desc_name):
-    print('[INFO] Working...')
-
-    # image directory
-    path = './images/'
+def main(im_path, desc_name):
+    print('[INFO] Preparing to extract features for images in \'' + im_path + '\'')
 
     # track HOG feature vectors and corresponding images
     features = {}
@@ -22,19 +19,17 @@ def main(desc_name):
     height = 64
 
     # feature descriptor
-    if desc_name == 'SIFT':
-        descriptor = SIFT()
-    elif desc_name == 'SURF':
-        descriptor = SURF()
-    elif desc_name == 'HOG':
+    print('[INFO] Using the ' + desc_name.upper() + ' feature descriptor')
+    if desc_name == 'hog':
         descriptor = HOG()
-    elif desc_name == 'ORB':
-        descriptor = ORB()
 
-    # evaluate image files
-    print('[INFO] Processing images and computing ' + desc_name + ' features')
-    for filename in os.listdir(path):
-        im = cv2.imread(path + filename, cv2.COLOR_BGR2GRAY)
+   # evaluate image files
+    print('[INFO] Processing images and computing features')
+    for filename in os.listdir(im_path):
+        if not filename.endswith('.jpg'):
+            continue
+
+        im = cv2.imread(im_path + filename, cv2.COLOR_BGR2GRAY)
 
         # resize image
         im = cv2.resize(im, (width,height))
@@ -57,15 +52,22 @@ def main(desc_name):
         pickle.dump(features, handle)
 
 if __name__ == '__main__':
-    # require name of descriptor to use
-    parser = argparse.ArgumentParser(description='Extract image feature vectors using feature descriptors (i.e., SIFT, SURF, HOG, ORB).')
+    # require image directory and name of descriptor to use
+    parser = argparse.ArgumentParser(description='Extract image feature vectors using feature descriptors')
+    parser.add_argument('-p', '--path', required=True,
+                        nargs='?', action='store', const='./images/',
+                        type=str, dest='im_path',
+                        help='The filepath of the image directory')
+
     parser.add_argument('-d', '--descriptor', required=True,
-                        choices=['SIFT', 'SURF', 'HOG', 'ORB'],
-                        nargs=1, action='store', type=str, dest='desc_name',
-                        help='The name of the descriptor to use (i.e., SIFT, SURF, HOG, ORB)')
+                        choices=['hog'],
+                        nargs='?', action='store', const='hog',
+                        type=str, dest='desc_name',
+                        help='The name of the descriptor to use')
 
     args = vars(parser.parse_args())
-    desc_name = args['desc_name'][0]
+    im_path = args['im_path']
+    desc_name = args['desc_name']
 
-    main(desc_name)
+    main(im_path, desc_name)
 
