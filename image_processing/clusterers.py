@@ -32,15 +32,16 @@ class DBSCAN:
         with open('./labels/dbscan_labels.pickle', 'wb') as handle:
             pickle.dump(self.labels, handle)
 
-        print('[INFO] DBSCAN model trained and saved to \'./models/dbscan_model.pickle\'')
+        print('[INFO] DBSCAN model saved to \'./models/dbscan_model.pickle\'')
         print('[INFO] Cluster labels saved to \'./labels/dbscan_labels.pickle\'')
 
 # Hierarchical DBSCAN
 class HDBSCAN:
 
     # initialize HDBSCAN model
-    def __init__(self, min_cluster_size=2, metric='cosine'):
-        self.clusterer = hdbscan.HDBSCAN(min_cluster_size=min_cluster_size, metric=metric)
+    def __init__(self, min_cluster_size=2, metric='cosine', algorithm='best'):
+        self.clusterer = hdbscan.HDBSCAN(min_cluster_size=min_cluster_size, metric=metric,
+                                         algorithm=algorithm)
 
     # cluster data
     def fit(self, dataset):
@@ -63,6 +64,6 @@ class HDBSCAN:
         with open('./labels/hdbscan_labels.pickle', 'wb') as handle:
             pickle.dump(self.labels, handle)
 
-        print('[INFO] HDBSCAN model trained and saved to \'./models/hdbscan_model.pickle\'')
+        print('[INFO] HDBSCAN model saved to \'./models/hdbscan_model.pickle\'')
         print('[INFO] Cluster labels saved to \'./labels/hdbscan_labels.pickle\'')
 

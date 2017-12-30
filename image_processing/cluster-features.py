@@ -3,6 +3,7 @@ import numpy as np
 import _pickle as pickle
 
 from clusterers import DBSCAN, HDBSCAN
+from sklearn.metrics.pairwise import pairwise_distances
 
 # train a DBSCAN model using the feature vectors
 def main(feats_path, clstr_algo):
@@ -17,15 +18,19 @@ def main(feats_path, clstr_algo):
     dataset = list(index.values())
     dataset = np.asarray(dataset)
 
+    # compute distance matrix using cosine similarity
+    print('[INFO] Computing cosine distance matrix')
+    dist_matrix = pairwise_distances(dataset, metric='cosine')
+
     # clusterer model
     print('[INFO] Using the ' + clstr_algo.upper() + ' algorithm to cluster features')
     if clstr_algo == 'dbscan':
-        clusterer = DBSCAN()
+        clusterer = DBSCAN(metric='precomputed', algorithm='auto')
     elif clstr_algo == 'hdbscan':
-        clusterer = HDBSCAN()
+        clusterer = HDBSCAN(metric='precomputed')
 
     # cluster and persist model
-    clusterer.fit(dataset)
+    clusterer.fit(dist_matrix.astype('float64'))
     clusterer.save(index.keys())
 
 if __name__ == '__main__':
