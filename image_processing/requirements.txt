@@ -1,6 +1,7 @@
 cycler==0.10.0
+Cython==0.27.3
 decorator==4.1.2
-hdbscan==0.8.11
+hdbscan-with-cosine-distance==0.8.1
 matplotlib==2.1.1
 networkx==2.0
 numpy==1.13.3

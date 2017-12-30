@@ -58,7 +58,6 @@ if __name__ == '__main__':
                         nargs='?', action='store', const='./images/',
                         type=str, dest='im_path',
                         help='The filepath of the image directory')
-
     parser.add_argument('-d', '--descriptor', required=True,
                         choices=['hog'],
                         nargs='?', action='store', const='hog',
