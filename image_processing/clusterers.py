@@ -27,7 +27,7 @@ class DBSCAN:
         self.labels = dict(zip(ims, self.labels))
 
         with open('./models/dbscan_model.pickle', 'wb') as handle:
-            pickle.dump(self.model, handle)
+            pickle.dump(self.model, handle, protocol=4)
 
         with open('./labels/dbscan_labels.pickle', 'wb') as handle:
             pickle.dump(self.labels, handle)
@@ -59,7 +59,7 @@ class HDBSCAN:
         self.labels = dict(zip(ims, self.labels))
 
         with open('./models/hdbscan_model.pickle', 'wb') as handle:
-            pickle.dump(self.model, handle)
+            pickle.dump(self.model, handle, protocol=4)
 
         with open('./labels/hdbscan_labels.pickle', 'wb') as handle:
             pickle.dump(self.labels, handle)
