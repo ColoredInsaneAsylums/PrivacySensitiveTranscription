@@ -5,7 +5,7 @@ import os
 import _pickle as pickle
 
 from descriptors import HOG
-from skimage.morphology import skeletonize
+#from skimage.morphology import skeletonize
 
 # run image filtering and HOG feature extraction
 def main(im_path, desc_name):
@@ -39,8 +39,8 @@ def main(im_path, desc_name):
         im[im == 255] = 1
 
         # thin using Zhang and Suen's method
-        im = skeletonize(im)
-        im = im.astype(np.uint8)
+        #im = skeletonize(im)
+        #im = im.astype(np.uint8)
 
         # compute features
         v = descriptor.compute(im)

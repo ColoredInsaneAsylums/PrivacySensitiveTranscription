@@ -1,11 +1,12 @@
+import argparse
 import cv2
 import _pickle as pickle
 
 # view items in clusters
-def main():
+def main(labels_path):
     print('[INFO] Working...')
 
-    with open('labels.pickle', 'rb') as handle:
+    with open(labels_path, 'rb') as handle:
         unpickler = pickle.Unpickler(handle)
         labels = unpickler.load()
 
@@ -43,5 +44,15 @@ def main():
                     break
 
 if __name__ == '__main__':
-    main()
+    # require cluster labels filepath
+    parser = argparse.ArgumentParser(description='Manually inspect clusters')
+    parser.add_argument('-p', '--path', required=True,
+                        nargs='?', action='store', const='./labels/dbscan_labels.pickle',
+                        type=str, dest='labels_path',
+                        help='The filepath of the cluster labels')
+
+    args = vars(parser.parse_args())
+    labels_path = args['labels_path']
+
+    main(labels_path)
 

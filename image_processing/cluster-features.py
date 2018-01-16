@@ -3,7 +3,6 @@ import numpy as np
 import _pickle as pickle
 
 from clusterers import DBSCAN, HDBSCAN
-from sklearn.metrics.pairwise import pairwise_distances
 
 # train a DBSCAN model using the feature vectors
 def main(feats_path, clstr_algo):
@@ -17,20 +16,15 @@ def main(feats_path, clstr_algo):
     # reshape 3d vectors to 2d
     dataset = list(index.values())
     dataset = np.asarray(dataset)
-
-    # compute distance matrix using cosine similarity
-    print('[INFO] Computing cosine distance matrix')
-    dist_matrix = pairwise_distances(dataset, metric='cosine')
-
     # clusterer model
     print('[INFO] Using the ' + clstr_algo.upper() + ' algorithm to cluster features')
     if clstr_algo == 'dbscan':
-        clusterer = DBSCAN(metric='precomputed', algorithm='auto')
+        clusterer = DBSCAN(metric='cosine', algorithm='brute')
     elif clstr_algo == 'hdbscan':
-        clusterer = HDBSCAN(metric='precomputed')
+        clusterer = HDBSCAN(metric='cosine')
 
     # cluster and persist model
-    clusterer.fit(dist_matrix.astype('float64'))
+    clusterer.fit(dataset)
     clusterer.save(index.keys())
 
 if __name__ == '__main__':
@@ -40,7 +34,7 @@ if __name__ == '__main__':
                         nargs='?', action='store', const='./features/hog_features.pickle',
                         type=str, dest='feats_path',
                         help='The filepath of the feature vectors')
-    parser.add_argument('-d', '--descriptor', required=True,
+    parser.add_argument('-a', '--algorithm', required=True,
                         choices=['dbscan', 'hdbscan'],
                         nargs='?', action='store', const='dbscan',
                         type=str, dest='clstr_algo',
