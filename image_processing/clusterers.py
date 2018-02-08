@@ -23,17 +23,17 @@ class DBSCAN:
         print('[INFO] Estimated number of noise points: %d' % n_noise_)
 
     # persist model
-    def save(self, ims):
+    def save(self, ims, prefix):
         self.labels = dict(zip(ims, self.labels))
 
-        with open('./models/dbscan_model.pickle', 'wb') as handle:
+        with open('./models/' + prefix + '_dbscan_model.pickle', 'wb') as handle:
             pickle.dump(self.model, handle, protocol=4)
 
-        with open('./labels/dbscan_labels.pickle', 'wb') as handle:
+        with open('./labels/' + prefix + '_dbscan_labels.pickle', 'wb') as handle:
             pickle.dump(self.labels, handle)
 
-        print('[INFO] DBSCAN model saved to \'./models/dbscan_model.pickle\'')
-        print('[INFO] Cluster labels saved to \'./labels/dbscan_labels.pickle\'')
+        print('[INFO] DBSCAN model saved to \'./models/' + prefix + '_dbscan_model.pickle\'')
+        print('[INFO] Cluster labels saved to \'./labels/' + prefix + '_dbscan_labels.pickle\'')
 
 # Hierarchical DBSCAN
 class HDBSCAN:
@@ -55,15 +55,15 @@ class HDBSCAN:
         print('[INFO] Estimated number of noise points: %d' % n_noise_)
 
     # persist model
-    def save(self, ims):
+    def save(self, ims, prefix):
         self.labels = dict(zip(ims, self.labels))
 
-        with open('./models/hdbscan_model.pickle', 'wb') as handle:
+        with open('./models/' + prefix + '_hdbscan_model.pickle', 'wb') as handle:
             pickle.dump(self.model, handle, protocol=4)
 
-        with open('./labels/hdbscan_labels.pickle', 'wb') as handle:
+        with open('./labels/' + prefix + '_hdbscan_labels.pickle', 'wb') as handle:
             pickle.dump(self.labels, handle)
 
-        print('[INFO] HDBSCAN model saved to \'./models/hdbscan_model.pickle\'')
-        print('[INFO] Cluster labels saved to \'./labels/hdbscan_labels.pickle\'')
+        print('[INFO] HDBSCAN model saved to \'./models/' + prefix + '_hdbscan_model.pickle\'')
+        print('[INFO] Cluster labels saved to \'./labels/' + prefix + '_hdbscan_labels.pickle\'')
 
