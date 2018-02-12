@@ -11,7 +11,8 @@ def main(labels_path):
         labels = unpickler.load()
 
     unique_labels = set(labels.values())
-    print('[INFO] ' + str(len(unique_labels) - 1) + ' unique clusters found')
+    print('[INFO] ' + str(len(unique_labels) - 1) + ' unique clusters and ' + \
+          str(list(labels.values()).count(-1)) + ' noise points found')
 
     print('[INFO] Press ESC to stop viewing a cluster, press any other key to continue')
 
