@@ -1,4 +1,5 @@
 import http.client, urllib.request, urllib.parse, urllib.error, base64, requests, time, json, os
+import cv2
 
 from azure_cfg import api_key
 subscription_key = api_key
@@ -12,9 +13,30 @@ def main():
         'Ocp-Apim-Subscription-Key': subscription_key,
     }
 
-    for filename in os.listdir(im_path):
+    images = os.listdir(im_path)
+    for idx, filename in enumerate(images):
         if not filename.endswith('.jpg'):
             continue
+
+        print('[INFO] Predicting text for ' + filename + ' (' + str(idx + 1) + '/' + str(len(images)) + ')')
+
+        im = cv2.imread(im_path + filename, cv2.COLOR_BGR2GRAY)
+        height, width = im.shape[:2]
+        max_dim = max(height, width)
+        min_dim = min(height, width)
+
+        if min_dim < 40:
+            print('Image height or width too small... skipping')
+            continue
+
+        if max_dim > 3200:
+            dim = 3200
+            r = dim / width
+            dim = (dim, int(height * r))
+            im = cv2.resize(im, dim, interpolation = cv2.INTER_AREA)
+            print(im.shape)
+            cv2.imwrite(im_path + 'tmp.jpg', im)
+            filename = 'tmp.jpg'
 
         body = open(im_path + filename, 'rb')
         params = {'handwriting' : 'true'}
@@ -30,14 +52,19 @@ def main():
 
             operationLocation = response.headers['Operation-Location']
 
-            print('\nHandwritten text submitted. Waiting 10 seconds to retrieve the recognized text.\n')
-            time.sleep(10)
+            time.sleep(8)
 
             response = requests.request('GET', operationLocation, json=None, data=None, headers=requestHeaders, params=None)
 
             parsed = json.loads(response.text)
-            print ("Response:")
-            print (json.dumps(parsed, sort_keys=True, indent=2))
+            lines = parsed['recognitionResult']['lines']
+            if len(lines):
+                text = []
+                for line in lines:
+                    text.append(line['text'])
+                print ("Response: " + ('\n').join(text))
+            else:
+                print ("No words detected")
 
         except Exception as e:
             print('Error:')
