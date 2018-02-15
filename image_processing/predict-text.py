@@ -2,20 +2,31 @@ import http.client, urllib.request, urllib.parse, urllib.error, base64, requests
 import cv2
 
 from azure_cfg import api_key
-subscription_key = api_key
+from pymongo import MongoClient
+import csh_db_cfg
+
 
 def main():
+    # azure setup
     uri_base = 'https://westcentralus.api.cognitive.microsoft.com'
     im_path = './images/'
-
     requestHeaders = {
         'Content-Type': 'application/octet-stream',
-        'Ocp-Apim-Subscription-Key': subscription_key,
+        'Ocp-Apim-Subscription-Key': api_key,
     }
 
+    # connection to mongodb
+    mongoConn = MongoClient(csh_db_cfg.DB_HOST + ":" + str(csh_db_cfg.DB_PORT))
+    cshTransDB = mongoConn[csh_db_cfg.TRANSCRIPTION_DB_NAME]
+    cshTransDB.authenticate(csh_db_cfg.TRANSCRIPTION_DB_USER,
+                            csh_db_cfg.TRANSCRIPTION_DB_PASS)
+    cshCollection = cshTransDB[csh_db_cfg.TRANS_DB_MeetingMinColl]
+
+    # loop through images
     images = os.listdir(im_path)
+    failed_images = []
     for idx, filename in enumerate(images):
-        if not filename.endswith('.jpg'):
+        if not filename.endswith('.jpg') or filename == 'tmp.jpg':
             continue
 
         print('[INFO] Predicting text for ' + filename + ' (' + str(idx + 1) + '/' + str(len(images)) + ')')
@@ -25,10 +36,18 @@ def main():
         max_dim = max(height, width)
         min_dim = min(height, width)
 
+        # image must be larger than 40x40
         if min_dim < 40:
-            print('Image height or width too small... skipping')
+            updateQuery = {
+                '$set': {
+                    'meetsDimensionThreshold': False
+                }
+            }
+            cshCollection.find_one_and_update({'anonymizedImageFile': filename}, updateQuery)
+
             continue
 
+        # image must be smaller than 3600x3600
         if max_dim > 3200:
             dim = 3200
             r = dim / width
@@ -41,14 +60,16 @@ def main():
         body = open(im_path + filename, 'rb')
         params = {'handwriting' : 'true'}
 
+        # ping Azure REST API
         try:
             response = requests.request('POST', uri_base + '/vision/v1.0/RecognizeText', json=None, data=body, headers=requestHeaders, params=params)
 
             if response.status_code != 202:
                 parsed = json.loads(response.text)
-                print ("Error:")
+                print ('[ERR] Error:')
                 print (json.dumps(parsed, sort_keys=True, indent=2))
-                exit()
+                failed_images.append(filename)
+                continue
 
             operationLocation = response.headers['Operation-Location']
 
@@ -56,19 +77,32 @@ def main():
 
             response = requests.request('GET', operationLocation, json=None, data=None, headers=requestHeaders, params=None)
 
+            # check if API detected text
             parsed = json.loads(response.text)
             lines = parsed['recognitionResult']['lines']
             if len(lines):
                 text = []
                 for line in lines:
                     text.append(line['text'])
-                print ("Response: " + ('\n').join(text))
+                prediction = ('\n').join(text)
             else:
-                print ("No words detected")
+                prediction = None
+
+            updateQuery = {
+                '$set': {
+                    'azurePrediction': prediction,
+                    'meetsDimensionThreshold': True
+                }
+            }
+            cshCollection.find_one_and_update({'anonymizedImageFile': filename}, updateQuery)
 
         except Exception as e:
-            print('Error:')
+            print('[ERR] Error:')
             print(e)
+            failed_images.append(filename)
+
+    print('\n[INFO] Done. Failed to get predictions for ' + len(failed_images) + ' images:')
+    print('\n\t'.join(failed_images))
 
 if __name__ == '__main__':
     main()
