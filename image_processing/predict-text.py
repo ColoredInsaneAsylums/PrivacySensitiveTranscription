@@ -101,7 +101,7 @@ def main():
             print(e)
             failed_images.append(filename)
 
-    print('\n[INFO] Done. Failed to get predictions for ' + len(failed_images) + ' images:')
+    print('\n[INFO] Done. Failed to get predictions for ' + str(len(failed_images)) + ' images:')
     print('\n\t'.join(failed_images))
 
 if __name__ == '__main__':
