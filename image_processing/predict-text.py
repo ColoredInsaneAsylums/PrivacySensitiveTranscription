@@ -75,15 +75,15 @@ def main():
                 failed_images.append(filename)
                 continue
 
+            # poll for API response
             operationLocation = response.headers['Operation-Location']
-
-            time.sleep(8)
-
-            response = requests.request('GET', operationLocation, json=None, data=None, headers=requestHeaders, params=None)
+            response = {}
+            while not "recognitionResult" in response:
+                response = requests.request('GET', operationLocation, headers=requestHeaders).json()
+                time.sleep(1)
 
             # check if API detected text
-            parsed = json.loads(response.text)
-            lines = parsed['recognitionResult']['lines']
+            lines = response['recognitionResult']['lines']
             if len(lines):
                 text = []
                 for line in lines:
