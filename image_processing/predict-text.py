@@ -57,7 +57,6 @@ def main():
             r = dim / width
             dim = (dim, int(height * r))
             im = cv2.resize(im, dim, interpolation = cv2.INTER_AREA)
-            print(im.shape)
             cv2.imwrite(im_path + 'tmp.jpg', im)
             filename = 'tmp.jpg'
 
