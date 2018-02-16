@@ -22,13 +22,16 @@ def main():
                             csh_db_cfg.TRANSCRIPTION_DB_PASS)
     cshCollection = cshTransDB[csh_db_cfg.TRANS_DB_MeetingMinColl]
 
+    # get images that have not yet been processed
+    searchQuery = {'meetsDimensionThreshold': {'$exists': False}}
+    selectionQuery = {'anonymizedImageFile': 1, '_id': 0}
+    images = list(cshCollection.find(searchQuery, selectionQuery))
+    images = set(map(lambda x: x['anonymizedImageFile'], images))
+    images = images.intersection(os.listdir(im_path))
+
     # loop through images
-    images = os.listdir(im_path)
     failed_images = []
     for idx, filename in enumerate(images):
-        if not filename.endswith('.jpg') or filename == 'tmp.jpg':
-            continue
-
         print('[INFO] Predicting text for ' + filename + ' (' + str(idx + 1) + '/' + str(len(images)) + ')')
 
         im = cv2.imread(im_path + filename, cv2.COLOR_BGR2GRAY)
@@ -38,12 +41,13 @@ def main():
 
         # image must be larger than 40x40
         if min_dim < 40:
+            searchQuery = {'anonymizedImageFile': filename}
             updateQuery = {
                 '$set': {
                     'meetsDimensionThreshold': False
                 }
             }
-            cshCollection.find_one_and_update({'anonymizedImageFile': filename}, updateQuery)
+            cshCollection.find_one_and_update(searchQuery, updateQuery)
 
             continue
 
@@ -88,13 +92,14 @@ def main():
             else:
                 prediction = None
 
+            searchQuery = {'anonymizedImageFile': filename}
             updateQuery = {
                 '$set': {
                     'azurePrediction': prediction,
                     'meetsDimensionThreshold': True
                 }
             }
-            cshCollection.find_one_and_update({'anonymizedImageFile': filename}, updateQuery)
+            cshCollection.find_one_and_update(searchQuery, updateQuery)
 
         except Exception as e:
             print('[ERR] Error:')
