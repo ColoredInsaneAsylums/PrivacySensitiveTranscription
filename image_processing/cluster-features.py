@@ -22,7 +22,7 @@ def main(feats_path, clstr_algo, output_name):
     if clstr_algo == 'dbscan':
         clusterer = DBSCAN(metric=braycurtis, algorithm='brute')
     elif clstr_algo == 'hdbscan':
-        clusterer = HDBSCAN(metric=braycurtis)
+        clusterer = HDBSCAN(metric='euclidean')
 
     # cluster and persist model
     clusterer.fit(dataset)

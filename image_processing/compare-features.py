@@ -32,7 +32,7 @@ def main(feat_path):
         # calculate cosine similarities
         print('[INFO] Calculating cosine similarities...')
         for image_n, feature_n in index.items():
-            score = 1 - spatial.distance.cosine(feature_n, feature_q)
+            score = 1 - spatial.distance.braycurtis(feature_n, feature_q)
             if score > threshold:
                 results[image_n] = score
 
