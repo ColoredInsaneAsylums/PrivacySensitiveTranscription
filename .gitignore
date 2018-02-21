@@ -1,9 +1,13 @@
 *.jpg
 *.zip
+*.tar
 *.pickle
 *.csv
-*_config.py
 *.pyc
+*.sh
+*_cfg.py
 __pycache__/
 venv/
-*cfg.py
+features/
+labels/
+
