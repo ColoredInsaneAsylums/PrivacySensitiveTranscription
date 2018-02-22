@@ -11,7 +11,7 @@ def main():
                 'w', 'x', 'y', 'z']
 
     # get words from dictionary
-    with open('./words.txt', 'r') as handle:
+    with open('./dictionary-words.txt', 'r') as handle:
         words = list(handle)
 
     # build PHOCs for dictionary using IAM PHOC parameters
@@ -20,7 +20,7 @@ def main():
                        unigram_levels=[1, 2, 3, 4, 5])
 
     # save dictionary to file
-    with open('./dictionary.pickle', 'wb') as handle:
+    with open('./dictionary-phocs.pickle', 'wb') as handle:
         pickle.dump(dict(zip(words, phocs)), handle)
 
 if __name__ == '__main__':

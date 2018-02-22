@@ -15,7 +15,7 @@ def main():
                        if not set(list(line.rstrip().lower())) - set(unigrams)])))
 
     # save dictionary to file
-    with open('words.txt', 'w') as handle:
+    with open('dictionary-words.txt', 'w') as handle:
         handle.write('\n'.join(words))
 
 if __name__ == '__main__':
