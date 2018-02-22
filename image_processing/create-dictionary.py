@@ -1,8 +1,4 @@
-import _pickle as pickle
-
-from phocnet.attributes.phoc import build_phoc
-
-# build a dictionary to perform QbS/word recognition
+# build a string dictionary to perform QbS/word recognition
 def main():
     # path to Unix/Linux words file
     words_path = '/usr/share/dict/words'
@@ -15,17 +11,12 @@ def main():
 
     # get words from Unix/Linux dictionary that do not contain extraneous unigrams
     with open(words_path, 'r') as handle:
-        words = sorted([line.rstrip().lower() for line in handle \
-                        if not set(list(line.rstrip().lower())) - set(unigrams)])
-
-    # build PHOCs for dictionary using IAM PHOC parameters
-    phocs = build_phoc(words=words,
-                       phoc_unigrams=unigrams,
-                       unigram_levels=[1, 2, 3, 4, 5])
+        words = sorted(list(set([line.rstrip().lower() for line in handle \
+                       if not set(list(line.rstrip().lower())) - set(unigrams)])))
 
     # save dictionary to file
-    with open('./dictionary.pickle', 'wb') as handle:
-        pickle.dump(dict(zip(words, phocs)), handle)
+    with open('words.txt', 'w') as handle:
+        handle.write('\n'.join(words))
 
 if __name__ == '__main__':
     main()
