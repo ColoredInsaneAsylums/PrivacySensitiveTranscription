@@ -12,7 +12,7 @@ def main():
 
     # get words from dictionary
     with open('./dictionary-words.txt', 'r') as handle:
-        words = list(handle)
+        words = sorted([line.rstrip() for line in handle])
 
     # build PHOCs for dictionary using IAM PHOC parameters
     phocs = build_phoc(words=words,
