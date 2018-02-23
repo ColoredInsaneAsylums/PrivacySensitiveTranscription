@@ -2,7 +2,7 @@ import argparse
 import _pickle as pickle
 
 from scipy.spatial import distance
-from sklearn.neighbors import KDTree
+from sklearn.neighbors import NearestNeighbors
 
 # predict text in image given the PHOCs
 def main(feat_path, dict_path):
@@ -14,13 +14,19 @@ def main(feat_path, dict_path):
         unpickler = pickle.Unpickler(handle)
         image_phocs = unpickler.load()
 
-    # load dictionary PHOCs and create KDTree
+    # load dictionary PHOCs
+    print('[INFO] Loading dicitonary (word) PHOCs from \'' + dict_path + '\'')
     with open(dict_path, 'rb') as handle:
         unpickler = pickle.Unpickler(handle)
         dict_phocs = unpickler.load()
         words = list(dict_phocs.keys())
         word_phocs = list(dict_phocs.values())
-        kdtree = KDTree(word_phocs, metric=distance.braycurtis)
+
+    # initiailize NearestNeighbors learner
+    n_neighbors = 5
+    nn = NearestNeighbors(n_neighbors=n_neighbors, algorithm='auto',
+                          metric=distance.braycurtis, n_jobs=-1)
+    nn = nn.fit(word_phocs)
 
     while True:
         results = {}
@@ -28,20 +34,20 @@ def main(feat_path, dict_path):
         # get user input
         image_q = input('[INPUT] Input an image to predict text for: ')
 
-        if image_q not in index:
+        if image_q not in image_phocs:
             print('[INFO] Query image not found, please try another.')
             continue
 
-        phoc_q = index[image_q]
+        phoc_q = image_phocs[image_q]
 
         # calculate braycurtis disimilaritiesi and find nearest neighbors
         print('[INFO] Finding top candidate predictions...')
-        dist, idx = kdtree.query(phoc_n, k=5)
+        dist, ind = nn.kneighbors(phoc_q)
 
         # present results
         print('[INFO] Results:')
-        for i in range(5):
-            print('{0}\t{1}'.format(words[idx[i]], dist[i]))
+        for i in range(n_neighbors):
+            print('{0}\t{1}'.format(words[ind[i]], dist[i]))
 
 if __name__ == '__main__':
     # require filepath of features
