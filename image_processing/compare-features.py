@@ -2,7 +2,7 @@ import argparse
 import cv2
 import _pickle as pickle
 
-from scipy import spatial
+from scipy.spatial import distance
 
 # find the most similar images given a query image
 def main(feat_path):
@@ -30,9 +30,9 @@ def main(feat_path):
         feature_q = index[image_q]
 
         # calculate cosine similarities
-        print('[INFO] Calculating cosine similarities...')
+        print('[INFO] Calculating bray curtis dissimilarities...')
         for image_n, feature_n in index.items():
-            score = 1 - spatial.distance.braycurtis(feature_n, feature_q)
+            score = 1 - distance.braycurtis(feature_n, feature_q)
             if score > threshold:
                 results[image_n] = score
 
@@ -46,8 +46,15 @@ def main(feat_path):
         for image_n, score in results:
             print('{0}\t{1}'.format(image_n, score))
 
-            # im = cv2.imread(image_n, 0)
-            # cv2.imshow(image_n, im)
+            img = cv2.imread('./images/' + image_n, 0)
+            cv2.imshow(image_n, img)
+
+            k = cv2.waitKey(0) & 0xFF
+            cv2.destroyAllWindows()
+
+            # press ESC to exit
+            if k == 27:
+                break
 
 if __name__ == '__main__':
     # require filepath of features
