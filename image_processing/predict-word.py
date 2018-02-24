@@ -1,4 +1,5 @@
 import argparse
+import numpy as np
 import _pickle as pickle
 
 from scipy.spatial import distance
@@ -20,9 +21,10 @@ def main(feat_path, dict_path):
         unpickler = pickle.Unpickler(handle)
         dict_phocs = unpickler.load()
         words = list(dict_phocs.keys())
-        word_phocs = list(dict_phocs.values())
+        word_phocs = np.array(list(dict_phocs.values()))
 
     # initiailize NearestNeighbors learner
+    print('[INFO] Fitting nearest neighbors learner')
     n_neighbors = 5
     nn = NearestNeighbors(n_neighbors=n_neighbors, algorithm='auto',
                           metric=distance.braycurtis, n_jobs=-1)
@@ -38,11 +40,12 @@ def main(feat_path, dict_path):
             print('[INFO] Query image not found, please try another.')
             continue
 
-        phoc_q = image_phocs[image_q]
+        phoc_q = image_phocs[image_q].reshape(1, -1)
 
-        # calculate braycurtis disimilaritiesi and find nearest neighbors
+        # calculate braycurtis disimilarities and find nearest neighbors
         print('[INFO] Finding top candidate predictions...')
         dist, ind = nn.kneighbors(phoc_q)
+        dist, ind = dist[0][::-1], ind[0][::-1]
 
         # present results
         print('[INFO] Results:')
