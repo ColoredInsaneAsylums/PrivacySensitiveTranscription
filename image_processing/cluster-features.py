@@ -2,7 +2,6 @@ import argparse
 import numpy as np
 import _pickle as pickle
 
-from scipy.spatial.distance import braycurtis
 from clusterers import DBSCAN, HDBSCAN
 
 # train a DBSCAN model using the feature vectors
@@ -20,9 +19,9 @@ def main(feats_path, clstr_algo, output_name):
     # clusterer model
     print('[INFO] Using the ' + clstr_algo.upper() + ' algorithm to cluster features')
     if clstr_algo == 'dbscan':
-        clusterer = DBSCAN(metric=braycurtis, algorithm='brute')
+        clusterer = DBSCAN(metric='braycurtis', algorithm='auto')
     elif clstr_algo == 'hdbscan':
-        clusterer = HDBSCAN(metric='euclidean')
+        clusterer = HDBSCAN(metric='braycurtis')
 
     # cluster and persist model
     clusterer.fit(dataset)
