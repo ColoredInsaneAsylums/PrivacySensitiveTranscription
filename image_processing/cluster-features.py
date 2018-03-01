@@ -4,7 +4,7 @@ import _pickle as pickle
 
 from clusterers import DBSCAN, HDBSCAN
 
-# train a DBSCAN model using the feature vectors
+# train a density-based model using the feature vectors
 def main(feats_path, clstr_algo, output_name):
     print('[INFO] Preparing to cluster features from \'' + feats_path + '\'')
 
@@ -19,9 +19,9 @@ def main(feats_path, clstr_algo, output_name):
     # clusterer model
     print('[INFO] Using the ' + clstr_algo.upper() + ' algorithm to cluster features')
     if clstr_algo == 'dbscan':
-        clusterer = DBSCAN(metric='braycurtis', algorithm='auto')
+        clusterer = DBSCAN()
     elif clstr_algo == 'hdbscan':
-        clusterer = HDBSCAN(metric='braycurtis')
+        clusterer = HDBSCAN()
 
     # cluster and persist model
     clusterer.fit(dataset)

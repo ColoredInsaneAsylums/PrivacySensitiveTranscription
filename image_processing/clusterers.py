@@ -6,8 +6,8 @@ import _pickle as pickle
 class DBSCAN:
 
     # initialize DBSCAN model
-    def __init__(self, eps=0.3, min_samples=2, metric='cosine',
-                 algorithm='brute', n_jobs=-1):
+    def __init__(self, eps=0.3, min_samples=2, metric='braycurtis',
+                 algorithm='auto', n_jobs=-1):
         self.clusterer = sklearn.cluster.DBSCAN(eps=eps, min_samples=min_samples, metric=metric,
                                                 algorithm=algorithm, n_jobs=n_jobs)
 
@@ -25,23 +25,20 @@ class DBSCAN:
     # persist model
     def save(self, ims, prefix):
         self.labels = dict(zip(ims, self.labels))
+        self.core_samples = [list(ims)[idx] for idx in self.model.core_sample_indices_]
 
         with open('./models/' + prefix + '_dbscan_model.pickle', 'wb') as handle:
-            pickle.dump(self.model, handle, protocol=4)
-
-        with open('./labels/' + prefix + '_dbscan_labels.pickle', 'wb') as handle:
-            pickle.dump(self.labels, handle)
+            pickle.dump(self.__dict__, handle, protocol=4)
 
         print('[INFO] DBSCAN model saved to \'./models/' + prefix + '_dbscan_model.pickle\'')
-        print('[INFO] Cluster labels saved to \'./labels/' + prefix + '_dbscan_labels.pickle\'')
 
 # Hierarchical DBSCAN
 class HDBSCAN:
 
     # initialize HDBSCAN model
-    def __init__(self, min_cluster_size=2, metric='cosine', algorithm='best'):
+    def __init__(self, min_cluster_size=2, metric='braycurtis', algorithm='best'):
         self.clusterer = hdbscan.HDBSCAN(min_cluster_size=min_cluster_size, metric=metric,
-                                         algorithm=algorithm)
+                                         algorithm=algorithm, core_dist_n_jobs=-1)
 
     # cluster data
     def fit(self, dataset):
@@ -59,11 +56,7 @@ class HDBSCAN:
         self.labels = dict(zip(ims, self.labels))
 
         with open('./models/' + prefix + '_hdbscan_model.pickle', 'wb') as handle:
-            pickle.dump(self.model, handle, protocol=4)
-
-        with open('./labels/' + prefix + '_hdbscan_labels.pickle', 'wb') as handle:
-            pickle.dump(self.labels, handle)
+            pickle.dump(self.__dict__, handle, protocol=4)
 
         print('[INFO] HDBSCAN model saved to \'./models/' + prefix + '_hdbscan_model.pickle\'')
-        print('[INFO] Cluster labels saved to \'./labels/' + prefix + '_hdbscan_labels.pickle\'')
 
