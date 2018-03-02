@@ -3,12 +3,12 @@ import cv2
 import _pickle as pickle
 
 # view items in clusters
-def main(labels_path):
-    print('[INFO] Working...')
-
-    with open(labels_path, 'rb') as handle:
+def main(model_path):
+    print('[INFO] Loading saved clustering model from \'' + model_path + '\'')
+    with open(model_path, 'rb') as handle:
         unpickler = pickle.Unpickler(handle)
-        labels = unpickler.load()
+        model = unpickler.load()
+        labels = model['labels']
 
     unique_labels = set(labels.values())
     print('[INFO] ' + str(len(unique_labels) - 1) + ' unique clusters and ' + \
@@ -45,15 +45,15 @@ def main(labels_path):
                     break
 
 if __name__ == '__main__':
-    # require cluster labels filepath
+    # require clustering model filepath
     parser = argparse.ArgumentParser(description='Manually inspect clusters')
     parser.add_argument('-p', '--path', required=True,
-                        nargs='?', action='store', const='./labels/dbscan_labels.pickle',
-                        type=str, dest='labels_path',
-                        help='The filepath of the cluster labels')
+                        nargs=1, action='store',
+                        type=str, dest='model_path',
+                        help='The filepath of the clustering model')
 
     args = vars(parser.parse_args())
-    labels_path = args['labels_path']
+    model_path = args['model_path'][0]
 
-    main(labels_path)
+    main(model_path)
 
