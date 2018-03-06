@@ -31,14 +31,15 @@ def main(feats_path, max_cluster_size):
 
         # update labels
         new_labels = clusterer.model.labels_
-        new_labels = dict(zip(index.keys(), new_labels))
 
         current_max = max(labels.values()) if len(labels) > 0 else 0
-        new_labels = [label + current_max for label in new_labels]
+        new_labels = [label + current_max if label > 1 else -1 for label in new_labels]
+
+        new_labels = dict(zip(index.keys(), new_labels))
         labels.update(new_labels)
 
         # get PHOCS of noise points to recluster
-        index = {k: v for k, v in index if new_labels[k] < 1}
+        index = {k: v for k, v in index if new_labels[k] == -1}
         min_cluster_size -= 1
 
     # save labels to disk
