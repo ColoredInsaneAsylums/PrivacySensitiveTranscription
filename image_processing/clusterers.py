@@ -36,9 +36,9 @@ class DBSCAN:
 class HDBSCAN:
 
     # initialize HDBSCAN model
-    def __init__(self, min_cluster_size=2, metric='braycurtis', algorithm='best'):
-        self.clusterer = hdbscan.HDBSCAN(min_cluster_size=min_cluster_size, metric=metric,
-                                         algorithm=algorithm, core_dist_n_jobs=-1)
+    def __init__(self, min_cluster_size=2, min_samples=None, metric='braycurtis', algorithm='best'):
+        self.clusterer = hdbscan.HDBSCAN(min_cluster_size=min_cluster_size, min_samples=min_samples,
+                                         metric=metric, algorithm=algorithm, core_dist_n_jobs=-1)
 
     # cluster data
     def fit(self, dataset):

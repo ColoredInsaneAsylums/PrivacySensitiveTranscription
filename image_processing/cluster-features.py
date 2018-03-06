@@ -36,7 +36,7 @@ if __name__ == '__main__':
                         help='The filepath of the feature vectors')
     parser.add_argument('-a', '--algorithm', required=True,
                         choices=['dbscan', 'hdbscan'],
-                        nargs='?', action='store', const='dbscan',
+                        nargs='?', action='store', const='hdbscan',
                         type=str, dest='clstr_algo',
                         help='The clustering algorithm to use')
     parser.add_argument('-o', '--output_name', required=True,
