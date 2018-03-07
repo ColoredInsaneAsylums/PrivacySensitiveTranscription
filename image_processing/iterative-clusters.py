@@ -19,7 +19,7 @@ def main(feats_path, max_cluster_size):
     # cluster iteratively
     min_cluster_size = max_cluster_size
     while len(index) > 0 and min_cluster_size >= 2:
-        print('[INFO] Clustering with min_cluster_size = ' + str(min_cluster_size))
+        print('[INFO] Clustering ' + str(len(index)) + ' points with min_cluster_size=' + str(min_cluster_size))
         clusterer = HDBSCAN(min_cluster_size=min_cluster_size)
 
         # reshape 3d vectors to 2d
@@ -39,14 +39,14 @@ def main(feats_path, max_cluster_size):
         labels.update(new_labels)
 
         # get PHOCS of noise points to recluster
-        index = {k: v for k, v in index if new_labels[k] == -1}
+        index = {k: v for k, v in index.items() if new_labels[k] == -1}
         min_cluster_size -= 1
 
     # save labels to disk
     output = './labels/iterative_hdbscan_' + str(max_cluster_size) + '_hdbscan_model.pickle'
     print('[INFO] Saving labels to ' + output)
     with open(output, 'wb') as handle:
-        pickle.dump(self.__dict__, handle, protocol=4)
+        pickle.dump(labels, handle, protocol=4)
 
 if __name__ == '__main__':
     # require filepath of features and name of clusterer to use
