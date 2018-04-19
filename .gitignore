@@ -3,6 +3,7 @@
 *.tar
 *.pickle
 *.csv
+*.npy
 *.pyc
 *.sh
 *_cfg.py
@@ -10,4 +11,3 @@ __pycache__/
 venv/
 features/
 labels/
-
