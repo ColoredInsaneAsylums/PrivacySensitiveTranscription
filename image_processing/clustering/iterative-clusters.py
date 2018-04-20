@@ -33,17 +33,17 @@ def main(feats_path, max_cluster_size):
         new_labels = clusterer.model.labels_
 
         current_max = max(labels.values()) if len(labels) > 0 else 0
-        new_labels = [label + current_max if label > 1 else -1 for label in new_labels]
+        new_labels = [label + current_max if label >= 1 else label for label in new_labels]
 
         new_labels = dict(zip(index.keys(), new_labels))
         labels.update(new_labels)
 
         # get PHOCS of noise points to recluster
-        index = {k: v for k, v in index.items() if new_labels[k] == -1}
+        index = {k: v for k, v in index.items() if new_labels[k] <= 0}
         min_cluster_size -= 1
 
     # save labels to disk
-    output = './labels/iterative_hdbscan_' + str(max_cluster_size) + '_hdbscan_model.pickle'
+    output = './labels/iterative_phoc_98_' + str(max_cluster_size) + '_hdbscan_model.pickle'
     print('[INFO] Saving labels to ' + output)
     with open(output, 'wb') as handle:
         pickle.dump(labels, handle, protocol=4)
