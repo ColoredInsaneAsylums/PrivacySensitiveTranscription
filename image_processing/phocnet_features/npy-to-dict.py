@@ -18,7 +18,7 @@ def main(images_path, feats_path):
     filename = feats_path[:len(feats_path) - 4] + '.pickle'
     print('[INFO] Saving features to \'./' + filename + '\'')
     with open('./' + filename, 'wb') as handle:
-        pickle.dump(features, handle, protocol=4)
+        pickle.dump(feats, handle, protocol=4)
 
 if __name__ == '__main__':
     # require filepath of the image directory and features

@@ -17,7 +17,7 @@ def main(feats_path, variance):
     vectors = pca.fit_transform(vectors)
 
     feats_path = feats_path.split('.')
-    feats_path = feats_path[0] + '_pca_' + str(int(variance * 100)) + '.' + feats_path[1]
+    feats_path = feats_path[0] + '_pca' + str(int(variance * 100)) + '.pickle'
 
     print('[INFO] Saving reduced vectors to ' + feats_path)
     with open(feats_path, 'wb') as handle:
@@ -26,7 +26,7 @@ def main(feats_path, variance):
 if __name__ == '__main__':
     # require features filepath and variance
     parser = argparse.ArgumentParser(description='Reduce vector dimensionality')
-    parser.add_argument('-p', '--path', required=True,
+    parser.add_argument('-f', '--feats', required=True,
                         nargs=1, action='store',
                         type=str, dest='feats_path',
                         help='The filepath of the features')
