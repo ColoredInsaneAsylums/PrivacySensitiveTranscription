@@ -12,6 +12,7 @@ def main(feats_path, max_cluster_size):
     with open(feats_path, 'rb') as handle:
         unpickler = pickle.Unpickler(handle)
         index = unpickler.load()
+        index = {name: vector for name, vector in index.items() if vector is not None}
 
     # labels
     labels = {}

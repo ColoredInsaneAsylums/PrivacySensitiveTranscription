@@ -12,6 +12,7 @@ def main(feats_path, clstr_algo, output_name):
     with open(feats_path, 'rb') as handle:
         unpickler = pickle.Unpickler(handle)
         index = unpickler.load()
+        index = {name: vector for name, vector in index.items() if vector is not None}
 
     # reshape 3d vectors to 2d
     dataset = list(index.values())
