@@ -9,6 +9,7 @@ def main(feats_path, variance):
         unpickler = pickle.Unpickler(handle)
         labels = unpickler.load()
 
+    labels = {name: vector for name, vector in labels.items() if vector is not None}
     names = list(labels.keys())
     vectors = list(labels.values())
 
