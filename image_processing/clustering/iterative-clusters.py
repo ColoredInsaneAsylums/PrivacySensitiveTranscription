@@ -52,7 +52,7 @@ def main(feats_path, max_cluster_size):
 if __name__ == '__main__':
     # require filepath of features and name of clusterer to use
     parser = argparse.ArgumentParser(description='Extract image feature vectors using feature descriptors')
-    parser.add_argument('-p', '--path', required=True,
+    parser.add_argument('-f', '--feats', required=True,
                         nargs='?', action='store', const='./features/hog_features.pickle',
                         type=str, dest='feats_path',
                         help='The filepath of the feature vectors')
