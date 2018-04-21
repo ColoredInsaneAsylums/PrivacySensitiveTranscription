@@ -43,7 +43,8 @@ def main(feats_path, max_cluster_size):
         min_cluster_size -= 1
 
     # save labels to disk
-    output = './labels/iterative_phoc_98_' + str(max_cluster_size) + '_hdbscan_model.pickle'
+    output = '../labels/iterative_' + feats_path.split('.')[0] + \
+             '_mcs' + str(max_cluster_size) + '_labels.pickle'
     print('[INFO] Saving labels to ' + output)
     with open(output, 'wb') as handle:
         pickle.dump(labels, handle, protocol=4)
