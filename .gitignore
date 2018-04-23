@@ -7,6 +7,7 @@
 *.pyc
 *.sh
 *_cfg.py
+.pynb_checkpoints/
 __pycache__/
 venv/
 features/
