@@ -5,7 +5,7 @@ import os.path as path
 import _pickle as pickle
 
 # cluster feature vectors using HDBSCAN
-def main(feats_path):
+def main(feats_path, mcs, ms):
     print('[INFO] Preparing to cluster features from ' + feats_path)
 
     # load feature vectors
@@ -19,8 +19,8 @@ def main(feats_path):
     dataset = np.asarray(dataset)
 
     # clusterer model
-    print('[INFO] Using HDBSCAN to cluster features')
-    clusterer = hdbscan.HDBSCAN(min_cluster_size=2, min_samples=None,
+    print('[INFO] Using HDBSCAN to cluster features with mcs=' + str(mcs) + ', ms=' + str(ms))
+    clusterer = hdbscan.HDBSCAN(min_cluster_size=mcs, min_samples=ms,
                                 metric='braycurtis', algorithm='best',
                                 core_dist_n_jobs=-1)
 
@@ -31,7 +31,7 @@ def main(feats_path):
     base = path.basename(feats_path)
     name = path.splitext(base)[0]
 
-    output = '../labels/hdbscan_' + name + '.pickle'
+    output = '../labels/hdbscan_' + name + '_mcs' + str(mcs) + '_ms' + str(ms)+ '.pickle'
     print('[INFO] Saving predicted labels to ' + output)
     with open(output, 'wb') as handle:
         pickle.dump(dict(zip(index.keys(), clusterer.labels)), handle, protocol=4)
@@ -43,9 +43,19 @@ if __name__ == '__main__':
                         nargs=1, action='store',
                         type=str, dest='feats_path',
                         help='The filepath of the feature vectors')
+    parser.add_argument('-mcs', '--minClSz', required=True,
+                        nargs=1, action='store',
+                        type=int, dest='mcs',
+                        help='The minimum size of clusters')
+    parser.add_argument('-ms', '--minSamples', required=True,
+                        nargs=1, action='store',
+                        type=int, dest='ms',
+                        help='The number of samples in a neighborhood to determine core points')
 
     args = vars(parser.parse_args())
     feats_path = args['feats_path'][0]
+    mcs = args['mcs'][0]
+    ms = args['ms'][0]
 
-    main(feats_path)
+    main(feats_path, mcs, ms)
 
