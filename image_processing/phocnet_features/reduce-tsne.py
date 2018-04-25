@@ -1,5 +1,5 @@
 import argparse
-import os.path as os
+import os.path as path
 import _pickle as pickle
 
 from sklearn.manifold import TSNE

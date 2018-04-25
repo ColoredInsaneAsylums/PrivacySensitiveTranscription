@@ -1,5 +1,5 @@
 import argparse
-import os.path as os
+import os.path as path
 import _pickle as pickle
 
 from sklearn.decomposition import PCA
@@ -22,7 +22,7 @@ def main(feats_path, variance):
     base = path.basename(feats_path)
     name = path.splitext(base)[0]
 
-    output = feats_path[0] + '_var' + str(int(variance * 100)) + '.pickle'
+    output = name + '_var' + str(int(variance * 100)) + '.pickle'
     print('[INFO] Saving reduced vectors to ' + output)
     with open(output, 'wb') as handle:
         pickle.dump(dict(zip(names, vectors)), handle)

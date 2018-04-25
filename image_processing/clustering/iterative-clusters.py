@@ -1,9 +1,8 @@
 import argparse
+import hdbscan
 import numpy as np
 import os.path as path
 import _pickle as pickle
-
-from clusterers import HDBSCAN
 
 # train a density-based model using the feature vectors
 def main(feats_path, max_cluster_size):

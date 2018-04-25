@@ -32,6 +32,7 @@ def main(feats_path):
     name = path.splitext(base)[0]
 
     output = '../labels/hdbscan_' + name + '.pickle'
+    print('[INFO] Saving predicted labels to ' + output)
     with open(output, 'wb') as handle:
         pickle.dump(dict(zip(index.keys(), clusterer.labels)), handle, protocol=4)
 
@@ -44,7 +45,7 @@ if __name__ == '__main__':
                         help='The filepath of the feature vectors')
 
     args = vars(parser.parse_args())
-    feats_path = args['feats_path']
+    feats_path = args['feats_path'][0]
 
     main(feats_path)
 

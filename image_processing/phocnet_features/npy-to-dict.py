@@ -19,7 +19,7 @@ def main(images_path, feats_path):
     name = os.path.splitext(base)[0]
 
     output = name + '.pickle'
-    print('[INFO] Saving features to \'./' + filename + '\'')
+    print('[INFO] Saving features to ./' + output)
     with open('./' + output, 'wb') as handle:
         pickle.dump(feats, handle, protocol=4)
 

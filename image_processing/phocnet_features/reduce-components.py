@@ -19,7 +19,7 @@ def main(feats_path, n_comps):
     vectors = pca.fit_transform(vectors)
 
     # save reduced vectors
-    base = path.basename(feats_file)
+    base = path.basename(feats_path)
     name = path.splitext(base)[0]
 
     output = name + '_ncomps' + str(int(n_comps)) + '.pickle'
