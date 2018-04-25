@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import os.path as path
 import _pickle as pickle
 
 from clusterers import HDBSCAN
@@ -21,7 +22,9 @@ def main(feats_path, max_cluster_size):
     min_cluster_size = max_cluster_size
     while len(index) > 0 and min_cluster_size >= 2:
         print('[INFO] Clustering ' + str(len(index)) + ' points with min_cluster_size=' + str(min_cluster_size))
-        clusterer = HDBSCAN(min_cluster_size=min_cluster_size)
+        clusterer = hdbscan.HDBSCAN(min_cluster_size=min_cluster_size, min_samples=None,
+                                    metric='braycurtis', algorithm='best',
+                                    core_dist_n_jobs=-1)
 
         # reshape 3d vectors to 2d
         dataset = list(index.values())
@@ -44,8 +47,10 @@ def main(feats_path, max_cluster_size):
         min_cluster_size -= 1
 
     # save labels to disk
-    output = '../labels/iterative_' + feats_path.split('.pickle')[0].split('/')[-1] + \
-             '_mcs' + str(max_cluster_size) + '_labels.pickle'
+    base = path.basename(feats_path)
+    name = path.splitext(base)[0]
+
+    output = '../labels/iterative_' + name + '_mcs' + str(max_cluster_size) + '_labels.pickle'
     print('[INFO] Saving labels to ' + output)
     with open(output, 'wb') as handle:
         pickle.dump(labels, handle, protocol=4)

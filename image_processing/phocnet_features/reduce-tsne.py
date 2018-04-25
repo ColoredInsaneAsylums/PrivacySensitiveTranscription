@@ -1,4 +1,5 @@
 import argparse
+import os.path as os
 import _pickle as pickle
 
 from sklearn.manifold import TSNE
@@ -16,11 +17,13 @@ def main(feats_path):
     tsne = TSNE(metric='braycurtis', verbose=1)
     projection = tsne.fit_transform(features)
 
-    feats_path = feats_path.split('.')
-    feats_path = feats_path[0] + '_tsne.pickle'
+    # save reduced vectors
+    base = path.basename(feats_path)
+    name = path.splitext(base)[0]
 
-    print('[INFO] Saving reduced vectors to ' + feats_path)
-    with open(feats_path, 'wb') as handle:
+    output = name + '_tsne.pickle'
+    print('[INFO] Saving reduced vectors to ' + output)
+    with open(output, 'wb') as handle:
         pickle.dump(projection, handle)
 
 if __name__ == '__main__':

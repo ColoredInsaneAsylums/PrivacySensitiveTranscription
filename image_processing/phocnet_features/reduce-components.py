@@ -1,4 +1,5 @@
 import argparse
+import os.path as path
 import _pickle as pickle
 
 from sklearn.decomposition import PCA
@@ -17,11 +18,13 @@ def main(feats_path, n_comps):
     pca = PCA(n_components=n_comps)
     vectors = pca.fit_transform(vectors)
 
-    feats_path = feats_path.split('.')
-    feats_path = feats_path[0] + '_ncomps' + str(int(n_comps)) + '.pickle'
+    # save reduced vectors
+    base = path.basename(feats_file)
+    name = path.splitext(base)[0]
 
-    print('[INFO] Saving reduced vectors to ' + feats_path)
-    with open(feats_path, 'wb') as handle:
+    output = name + '_ncomps' + str(int(n_comps)) + '.pickle'
+    print('[INFO] Saving reduced vectors to ' + output)
+    with open(output, 'wb') as handle:
         pickle.dump(dict(zip(names, vectors)), handle)
 
 if __name__ == '__main__':
@@ -33,7 +36,8 @@ if __name__ == '__main__':
                         help='The filepath of the features')
     parser.add_argument('-n', '--n_comps', required=True,
                         nargs=1, action='store',
-                        type=int, dest='n_comps')
+                        type=int, dest='n_comps',
+                        help='The number of components to reduce to')
 
     args = vars(parser.parse_args())
     feats_path = args['feats_path'][0]

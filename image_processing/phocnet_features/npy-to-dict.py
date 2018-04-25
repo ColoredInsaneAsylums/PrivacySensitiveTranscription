@@ -15,9 +15,12 @@ def main(images_path, feats_path):
              for name, feat in feats.items()}
 
     # save data
-    filename = feats_path[:len(feats_path) - 4] + '.pickle'
+    base = os.path.basename(feats_path)
+    name = os.path.splitext(base)[0]
+
+    output = name + '.pickle'
     print('[INFO] Saving features to \'./' + filename + '\'')
-    with open('./' + filename, 'wb') as handle:
+    with open('./' + output, 'wb') as handle:
         pickle.dump(feats, handle, protocol=4)
 
 if __name__ == '__main__':
