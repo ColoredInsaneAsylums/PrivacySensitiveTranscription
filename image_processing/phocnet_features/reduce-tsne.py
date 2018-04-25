@@ -1,0 +1,38 @@
+import argparse
+import _pickle as pickle
+
+from sklearn.manifold import TSNE
+
+# conduct t-SNE to reduce vector dimensionality for visualization
+def main(feats_path):
+    with open(feats_path, 'rb') as handle:
+        unpickler = pickle.Unpickler(handle)
+        labels = unpickler.load()
+
+    labels = {name: vector for name, vector in labels.items() if vector is not None}
+    features = list(labels.values())
+
+    print('[INFO] Conducting t-SNE on ' + feats_path)
+    tsne = TSNE(metric='braycurtis', verbose=1)
+    projection = tsne.fit_transform(features)
+
+    feats_path = feats_path.split('.')
+    feats_path = feats_path[0] + '_tsne.pickle'
+
+    print('[INFO] Saving reduced vectors to ' + feats_path)
+    with open(feats_path, 'wb') as handle:
+        pickle.dump(projection, handle)
+
+if __name__ == '__main__':
+    # require features filepath
+    parser = argparse.ArgumentParser(description='Reduce vector dimensionality')
+    parser.add_argument('-f', '--feats', required=True,
+                        nargs=1, action='store',
+                        type=str, dest='feats_path',
+                        help='The filepath of the features')
+
+    args = vars(parser.parse_args())
+    feats_path = args['feats_path'][0]
+
+    main(feats_path)
+
