@@ -16,7 +16,8 @@ def main(feats_path):
     features = np.asarray(list(labels.values()))
 
     print('[INFO] Conducting t-SNE on ' + feats_path)
-    tsne = TSNE(metric='braycurtis', verbose=1, n_jobs=-1)
+    tsne = TSNE(metric='braycurtis', verbose=1,
+                n_iter=5000, random_state=42, n_jobs=-1)
     projection = tsne.fit_transform(features)
 
     # save reduced vectors
