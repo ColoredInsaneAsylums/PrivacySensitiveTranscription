@@ -1,8 +1,10 @@
 import argparse
+import numpy as np
 import os.path as path
 import _pickle as pickle
 
-from sklearn.manifold import TSNE
+#from sklearn.manifold import TSNE
+from MulticoreTSNE import MulticoreTSNE as TSNE
 
 # conduct t-SNE to reduce vector dimensionality for visualization
 def main(feats_path):
@@ -11,10 +13,10 @@ def main(feats_path):
         labels = unpickler.load()
 
     labels = {name: vector for name, vector in labels.items() if vector is not None}
-    features = list(labels.values())
+    features = np.asarray(list(labels.values()))
 
     print('[INFO] Conducting t-SNE on ' + feats_path)
-    tsne = TSNE(metric='braycurtis', verbose=1)
+    tsne = TSNE(metric='braycurtis', verbose=1, n_jobs=-1)
     projection = tsne.fit_transform(features)
 
     # save reduced vectors
