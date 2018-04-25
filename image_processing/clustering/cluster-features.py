@@ -34,7 +34,7 @@ def main(feats_path, mcs, ms):
     output = '../labels/hdbscan_' + name + '_mcs' + str(mcs) + '_ms' + str(ms)+ '.pickle'
     print('[INFO] Saving predicted labels to ' + output)
     with open(output, 'wb') as handle:
-        pickle.dump(dict(zip(index.keys(), clusterer.labels)), handle, protocol=4)
+        pickle.dump(dict(zip(index.keys(), clusterer.labels_)), handle, protocol=4)
 
 if __name__ == '__main__':
     # require filepath of features
