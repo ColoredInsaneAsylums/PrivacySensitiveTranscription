@@ -33,7 +33,7 @@ def main(feats_path, max_cluster_size):
         clusterer.fit(dataset)
 
         # update labels
-        new_labels = clusterer.model.labels_
+        new_labels = clusterer.labels_
 
         current_max = max(labels.values()) if len(labels) > 0 else 0
         new_labels = [label + current_max if label >= 1 else label for label in new_labels]
