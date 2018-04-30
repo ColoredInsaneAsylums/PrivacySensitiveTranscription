@@ -33,7 +33,7 @@ def main(label_path):
         # view items in clusters
         for im, l in labels.items():
             if l == label:
-                img = cv2.imread('./images/' + im, 0)
+                img = cv2.imread('../r37/' + im, 0)
                 cv2.imshow(im, img)
 
                 k = cv2.waitKey(0) & 0xFF
