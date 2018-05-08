@@ -6,7 +6,7 @@ import _pickle as pickle
 
 # train a density-based model using the feature vectors
 def main(feats_path, max_cluster_size):
-    print('[INFO] Preparing to cluster features from \'' + feats_path + '\'')
+    print('[INFO] Preparing to cluster features from ' + feats_path)
 
     # load feature vectors
     with open(feats_path, 'rb') as handle:
@@ -41,7 +41,7 @@ def main(feats_path, max_cluster_size):
         new_labels = dict(zip(index.keys(), new_labels))
         labels.update(new_labels)
 
-        # get PHOCS of noise points to recluster
+        # get features of noise points to recluster
         index = {k: v for k, v in index.items() if new_labels[k] <= 0}
         min_cluster_size -= 1
 
@@ -56,19 +56,19 @@ def main(feats_path, max_cluster_size):
 
 if __name__ == '__main__':
     # require filepath of features and name of clusterer to use
-    parser = argparse.ArgumentParser(description='Extract image feature vectors using feature descriptors')
+    parser = argparse.ArgumentParser(description='Cluster image feature vectors')
     parser.add_argument('-f', '--feats', required=True,
-                        nargs='?', action='store', const='./features/hog_features.pickle',
+                        nargs=1, action='store',
                         type=str, dest='feats_path',
                         help='The filepath of the feature vectors')
     parser.add_argument('-m', '--max_cluster_size', required=True,
-                        nargs='?', action='store', const=2,
+                        nargs=1, action='store',
                         type=int, dest='max_cluster_size',
                         help='The max clustering size to begin with')
 
     args = vars(parser.parse_args())
-    feats_path = args['feats_path']
-    max_cluster_size = args['max_cluster_size']
+    feats_path = args['feats_path'][0]
+    max_cluster_size = args['max_cluster_size'][0]
 
     main(feats_path, max_cluster_size)
 

@@ -5,14 +5,14 @@ import _pickle as pickle
 from scipy.spatial import distance
 
 # find the most similar images given a query image
-def main(feat_path):
+def main(feat_path, images_path):
     print('[INFO] Working...')
 
     # similarity threshold
     threshold = 0.6
 
     # load feature vectors
-    print('[INFO] Loading features from \'' + feat_path + '\'')
+    print('[INFO] Loading features from ' + feat_path)
     with open(feat_path, 'rb') as handle:
         unpickler = pickle.Unpickler(handle)
         index = unpickler.load()
@@ -29,8 +29,8 @@ def main(feat_path):
 
         feature_q = index[image_q]
 
-        # calculate cosine similarities
-        print('[INFO] Calculating bray curtis dissimilarities...')
+        # calculate Bray Curtis dissimilarities
+        print('[INFO] Calculating Bray Curtis dissimilarities...')
         for image_n, feature_n in index.items():
             score = 1 - distance.braycurtis(feature_n, feature_q)
             if score > threshold:
@@ -46,7 +46,7 @@ def main(feat_path):
         for image_n, score in results:
             print('{0}\t{1}'.format(image_n, score))
 
-            img = cv2.imread('./images/' + image_n, 0)
+            img = cv2.imread(images_path + '/'  + image_n, 0)
             cv2.imshow(image_n, img)
 
             k = cv2.waitKey(0) & 0xFF
@@ -59,13 +59,19 @@ def main(feat_path):
 if __name__ == '__main__':
     # require filepath of features
     parser = argparse.ArgumentParser(description='Compare image feature vectors via cosine similarity')
-    parser.add_argument('-p', '--path', required=True,
-                        nargs='?', action='store', const='./features/hog_features.pickle',
+    parser.add_argument('-f', '--feats', required=True,
+                        nargs=1, action='store',
                         type=str, dest='feat_path',
                         help='The filepath of the feature vectors to compare')
+    parser.add_argument('-i', '--images', required=True,
+                        nargs=1, action='store',
+                        type=str, dest='images_path',
+                        help='The directory path of the images to compare')
+
 
     args = vars(parser.parse_args())
-    feat_path = args['feat_path']
+    feat_path = args['feat_path'][0]
+    images_path = args['images_path'][0]
 
-    main(feat_path)
+    main(feat_path, images_path)
 
