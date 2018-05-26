@@ -3,6 +3,7 @@ import hdbscan
 import numpy as np
 import os.path as path
 import _pickle as pickle
+import time
 
 # train a density-based model using the feature vectors
 def main(feats_path, max_cluster_size):
@@ -16,6 +17,9 @@ def main(feats_path, max_cluster_size):
 
     # labels
     labels = {}
+
+    # start timer
+    start = time.time()
 
     # cluster iteratively
     min_cluster_size = max_cluster_size
@@ -32,18 +36,22 @@ def main(feats_path, max_cluster_size):
         # fit clusterer
         clusterer.fit(dataset)
 
-        # update labels
+        # update labels (treat cluster 0 as noise)
         new_labels = clusterer.labels_
 
-        current_max = max(labels.values()) if len(labels) > 0 else 0
-        new_labels = [label + current_max if label >= 1 else label for label in new_labels]
+        current_max = max(labels.values()) if len(labels) > 0 else -1
+        new_labels = [label + current_max if label > 0 else -1 for label in new_labels]
 
         new_labels = dict(zip(index.keys(), new_labels))
         labels.update(new_labels)
 
         # get features of noise points to recluster
-        index = {k: v for k, v in index.items() if new_labels[k] <= 0}
+        index = {k: v for k, v in index.items() if new_labels[k] == -1}
         min_cluster_size -= 1
+
+    # end timer and print
+    end = time.time()
+    print('[INFO] Clustering completed after ' + str(end - start) + ' seconds')
 
     # save labels to disk
     base = path.basename(feats_path)
